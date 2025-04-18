@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/WelcomeScreen.dart';
+import 'Screens/WelcomeScreen.dart';
 
 void main() {
   runApp(ShaghalnyApp());

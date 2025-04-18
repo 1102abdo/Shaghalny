@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/screens/LoginScreen.dart'; // تأكد من المسار الصحيح للملف
+import 'package:shaghalny/Screens/LoginScreen.dart'; // تأكد من المسار الصحيح للملف
 
 class LogoutPage extends StatelessWidget {
   @override

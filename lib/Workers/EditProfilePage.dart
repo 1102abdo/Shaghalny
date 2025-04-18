@@ -44,7 +44,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('تم حفظ التعديلات بنجاح!')),
       );
-      Navigator.pop(context); // العودة إلى الصفحة السابقة بعد حفظ التعديلات
+      Navigator.pop(context); 
     }
   }
 
