@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'workerProfile.dart'; // تأكد من أنك قد قمت بإنشاء هذه الصفحة
-import 'package:shaghalny/Workers/AvailableJobsPage.dart'; // تأكد من أنك قد قمت بإنشاء صفحة الوظائف المتاحة
+// import 'package:shaghalny/Workers/AvailableJobsPage.dart'; // تأكد من أنك قد قمت بإنشاء صفحة الوظائف المتاحة
 import 'EditProfilePage.dart';  // استيراد صفحة التعديل بشكل صحيح
 
 class WorkerDashboard extends StatelessWidget {
