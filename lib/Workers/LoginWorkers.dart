@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Workers/AvailableJobsPage.dart'; // تأكد من المسار الصحيح
+import './AvailableJobsPage.dart'; // تأكد من المسار
+import './SignUpWorkers.dart'; // تأكد من المسار الصحيح
 
-class LoginScreen extends StatefulWidget {
-  final String userType; // إضافة الـ parameter الجديد
+class LoginWorkers extends StatefulWidget {
+  final String userType;
 
-  LoginScreen({Key? key, required this.userType}) : super(key: key); // تعريف الـ ructor
+  LoginWorkers({Key? key, required this.userType}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginWorkersState createState() => _LoginWorkersState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginWorkersState extends State<LoginWorkers> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -20,19 +21,31 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      Future.delayed( Duration(seconds: 2), () {
+      Future.delayed(Duration(seconds: 2), () {
         setState(() => _isLoading = false);
 
-        // هنا نقدر ننقل المستخدم لصفحة تانية بعد تسجيل الدخول بنجاح
+        // رسالة نجاح بشكل أنيق
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تم تسجيل الدخول بنجاح كـ ${widget.userType}')),
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Text('تم تسجيل الدخول بنجاح كـ ${widget.userType}'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
         );
 
-        // بعد نجاح تسجيل الدخول، سيتم الانتقال إلى AvailableJobsPage
+        // الانتقال لصفحة الوظائف المتاحة
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => AvailableJobsPage(userName: _emailController.text), // إرسال بيانات المستخدم
+            builder: (context) => AvailableJobsPage(
+              userName: _emailController.text,
+            ),
           ),
         );
       });
@@ -50,36 +63,36 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('تسجيل الدخول'),
+        title: Text('تسجيل الدخول'),
         backgroundColor: Colors.orange,
       ),
       body: SafeArea(
         child: Padding(
-          padding:  EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(24.0),
           child: Form(
             key: _formKey,
             child: ListView(
               shrinkWrap: true,
               children: [
-                 Icon(Icons.lock_outline, size: 100, color: Colors.orange),
-                 SizedBox(height: 20),
+                Icon(Icons.business, size: 100, color: Colors.orange),
+                SizedBox(height: 20),
                 Text(
-                  'تسجيل الدخول (${widget.userType})', // استخدام الـ userType هنا
-                  style:  TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  'تسجيل الدخول (${widget.userType})',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                 SizedBox(height: 16),
-                 Text(
+                SizedBox(height: 16),
+                Text(
                   'ادخل بياناتك لتسجيل الدخول',
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
-                 SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // البريد الإلكتروني
                 TextFormField(
                   controller: _emailController,
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'البريد الإلكتروني',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.email),
@@ -93,13 +106,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                 SizedBox(height: 12),
+                SizedBox(height: 12),
 
                 // كلمة المرور
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'كلمة المرور',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.lock),
@@ -113,28 +126,47 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                 SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // زر تسجيل الدخول
                 _isLoading
-                    ?  Center(child: CircularProgressIndicator())
+                    ? Center(child: CircularProgressIndicator())
                     : SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
-                            padding:  EdgeInsets.symmetric(vertical: 16),
+                            padding: EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child:  Text(
+                          child: Text(
                             'تسجيل الدخول',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
                       ),
+
+                // رابط الانتقال لصفحة التسجيل
+                SizedBox(height: 20),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignUpWorkers(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'ليس لديك حساب؟ أنشئ حسابًا الآن',
+                      style: TextStyle(fontSize: 16, color: Colors.orange),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

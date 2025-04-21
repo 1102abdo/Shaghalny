@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'LoginScreen.dart';
+import '../Workers/LoginWorkers.dart';
+import '../Employers/LoginEmployers.dart';  // تأكد من استيراد صفحة LoginEmployers
 
 class ChooseUserTypeScreen extends StatelessWidget {
   const ChooseUserTypeScreen({super.key});
@@ -44,7 +45,7 @@ class ChooseUserTypeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginScreen(userType: 'عامل'),
+                        builder: (context) => LoginWorkers(userType: 'عامل'),
                       ),
                     );
                   },
@@ -53,7 +54,7 @@ class ChooseUserTypeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // زر صاحب الشغل - مع رسالة
+              // زر صاحب الشغل
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -65,10 +66,10 @@ class ChooseUserTypeScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('ميزة صاحب الشغل غير متوفرة حاليًا'),
-                        backgroundColor: Colors.redAccent,
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginEmployers(userType: 'صاحب شغل'),
                       ),
                     );
                   },
@@ -82,4 +83,3 @@ class ChooseUserTypeScreen extends StatelessWidget {
     );
   }
 }
-

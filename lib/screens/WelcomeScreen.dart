@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shaghalny/screens/ChooseUserType.dart';
 // import 'ChooseUserType.dart';
-import 'SignUpScreen.dart';
+import '../Workers/SignUpWorkers.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -42,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SignUpScreen(),
+                          builder: (context) => ChooseUserTypeScreen(),
                         ),
                       );
                     },

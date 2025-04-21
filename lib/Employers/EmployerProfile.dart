@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Workers/AvailableJobsPage.dart';
-import 'SettingsPage.dart'; // تأكد من استيراد صفحة الإعدادات
 import 'LogoutPage.dart';  // تأكد من استيراد صفحة تسجيل الخروج
-import 'EditProfilePage.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
+import 'EditProfile.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
+import 'CreateProject.dart'; // صفحة إنشاء مشروع جديد
+import 'PostedProfile.dart'; // صفحة عرض المشاريع المنشورة
+import 'SettingPages.dart'; // تأكد من استيراد صفحة الإعدادات
 
-class WorkerProfilePage extends StatelessWidget {
+class EmployerProfile extends StatelessWidget {
   final String userName;
   final String userEmail;
-  final String userJob;
+  final String companyName;
 
-  const WorkerProfilePage({
+  const EmployerProfile({
     required this.userName,
     required this.userEmail,
-    required this.userJob,
+    required this.companyName,
     Key? key,
   }) : super(key: key);
 
@@ -20,7 +21,7 @@ class WorkerProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('الملف الشخصي'),
+        title: Text('ملف صاحب العمل'),
         backgroundColor: Colors.orange,
         actions: [
           IconButton(
@@ -28,7 +29,7 @@ class WorkerProfilePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LogoutPage()),
+                MaterialPageRoute(builder: (context) => LogoutPages()),
               );
             },
           ),
@@ -38,27 +39,28 @@ class WorkerProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            Icon(Icons.account_circle, size: 100, color: Colors.orange),
+            Icon(Icons.business, size: 100, color: Colors.orange),
             SizedBox(height: 16),
             Text(
-              'اسم العامل: $userName',
+              'اسم صاحب العمل: $userName',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text('البريد الإلكتروني: $userEmail', style: TextStyle(fontSize: 16)),
             SizedBox(height: 8),
-            Text('المهنة: $userJob', style: TextStyle(fontSize: 16)),
+            Text('اسم الشركة: $companyName', style: TextStyle(fontSize: 16)),
             SizedBox(height: 32),
+            
+            // تعديل الملف الشخصي
             ElevatedButton.icon(
               onPressed: () {
-                // تمرير المعاملات إلى صفحة تعديل الملف الشخصي
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditProfilePage(
-                      userName: userName,  // تمرير userName
-                      userEmail: userEmail, // تمرير userEmail
-                      userJob: userJob,     // تمرير userJob
+                    builder: (context) => EditProfile(
+                      userName: userName,
+                      userEmail: userEmail,
+                      userJob: companyName,
                     ),
                   ),
                 );
@@ -72,28 +74,49 @@ class WorkerProfilePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+
+            // إنشاء مشروع جديد
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AvailableJobsPage(userName: userName),
+                    builder: (context) => CreateProject(userName: userName),
                   ),
                 );
               },
-              icon: Icon(Icons.work_outline),
-              label: Text('عرض الوظائف المتاحة'),
+              icon: Icon(Icons.add_business),
+              label: Text('إنشاء مشروع جديد'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey[200],
                 foregroundColor: Colors.black,
               ),
             ),
             SizedBox(height: 20),
+
+            // عرض المشاريع المنشورة
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                  MaterialPageRoute(builder: (context) => PostedProfile()),
+                );
+              },
+              icon: Icon(Icons.folder_open),
+              label: Text('مشاريعي المنشورة'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+                foregroundColor: Colors.black,
+              ),
+            ),
+            SizedBox(height: 20),
+
+            // الإعدادات
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingPages()),
                 );
               },
               icon: Icon(Icons.settings),
