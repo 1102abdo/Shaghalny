@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+import 'SignUpEmployers.dart'; // استيراد صفحة التسجيل
+import 'CreateProject.dart';  // استيراد صفحة إنشاء المشروع
+
+class LoginEmployers extends StatefulWidget {
+  final String userType;
+
+  const LoginEmployers({super.key, required this.userType});
+
+  @override
+  _LoginEmployersState createState() => _LoginEmployersState();
+}
+
+class _LoginEmployersState extends State<LoginEmployers> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('تسجيل دخول صاحب الشغل'),
+        backgroundColor: Colors.orange,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // البريد الإلكتروني
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: 'البريد الإلكتروني',
+                  prefixIcon: Icon(Icons.email),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'من فضلك أدخل البريد الإلكتروني';
+                  } else if (!value.contains('@')) {
+                    return 'البريد الإلكتروني غير صالح';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // كلمة المرور
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'كلمة المرور',
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'من فضلك أدخل كلمة المرور';
+                  } else if (value.length < 6) {
+                    return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 32),
+
+              // زر تسجيل الدخول
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('✅ تم تسجيل الدخول بنجاح'),
+                          backgroundColor: Colors.green,
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+
+                      // الحصول على البريد الإلكتروني كـ userName
+                      String userName = emailController.text;
+
+                      // الانتقال إلى صفحة إنشاء مشروع مع تمرير userName
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateProject(userName: userName),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('تسجيل دخول'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // رابط للتسجيل إذا ليس لديك حساب
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignUpEmployers()),
+                  );
+                },
+                child: Text(
+                  'ليس لديك حساب؟ سجل هنا',
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
