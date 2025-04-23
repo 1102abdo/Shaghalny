@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'LogoutPage.dart';  // تأكد من استيراد صفحة تسجيل الخروج
-import 'EditProfile.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
-import 'CreateProject.dart'; // صفحة إنشاء مشروع جديد
-import 'PostedProfile.dart'; // صفحة عرض المشاريع المنشورة
-import 'SettingPages.dart'; // تأكد من استيراد صفحة الإعدادات
+import 'logout_page.dart';  // تأكد من استيراد صفحة تسجيل الخروج
+import 'edit_profile.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
+import 'create_project.dart'; // صفحة إنشاء مشروع جديد
+import 'posted_profile.dart'; // صفحة عرض المشاريع المنشورة
+import 'setting_pages.dart'; // تأكد من استيراد صفحة الإعدادات
 
 class EmployerProfile extends StatelessWidget {
   final String userName;
@@ -14,8 +14,8 @@ class EmployerProfile extends StatelessWidget {
     required this.userName,
     required this.userEmail,
     required this.companyName,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'SignUpEmployers.dart'; // استيراد صفحة التسجيل
-import 'CreateProject.dart';  // استيراد صفحة إنشاء المشروع
+import 'sign_up_employers.dart'; // استيراد صفحة التسجيل
+import 'create_project.dart';  // استيراد صفحة إنشاء المشروع
 
 class LoginEmployers extends StatefulWidget {
   final String userType;
@@ -8,10 +8,10 @@ class LoginEmployers extends StatefulWidget {
   const LoginEmployers({super.key, required this.userType});
 
   @override
-  _LoginEmployersState createState() => _LoginEmployersState();
+  LoginEmployersState createState() => LoginEmployersState();
 }
 
-class _LoginEmployersState extends State<LoginEmployers> {
+class LoginEmployersState extends State<LoginEmployers> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -94,11 +94,11 @@ class _LoginEmployersState extends State<LoginEmployers> {
                       );
                     }
                   },
-                  child: Text('تسجيل دخول'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
+                  child: Text('تسجيل دخول'),
                 ),
               ),
               const SizedBox(height: 16),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'workerProfile.dart'; // تأكد إنك مكوّن الصفحة دي ومسميها كده
-import 'SettingsPage.dart'; // تأكد من استيراد صفحة الإعدادات
+import 'worker_profile.dart'; // تأكد إنك مكوّن الصفحة دي ومسميها كده
+import 'settings_page.dart'; // تأكد من استيراد صفحة الإعدادات
 
 class AvailableJobsPage extends StatelessWidget {
   final String userName;
 
-  const AvailableJobsPage({required this.userName, Key? key}) : super(key: key);
+  const AvailableJobsPage({required this.userName, super.key});
 
   @override
   Widget build(BuildContext context) {

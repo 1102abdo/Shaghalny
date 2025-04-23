@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Employers/LoginEmployers.dart';
-import 'package:shaghalny/Screens/ChooseUserType.dart'; // تأكد من المسار
-import 'LoginEmployers.dart'; // ممكن تستبدله بـ LoginEmployers لو فيه صفحة تسجيل دخول خاصة
+import 'package:shaghalny/Screens/choose_user_type.dart'; // تأكد من استيراد الصفحة هنا
+//import 'login_workers.dart';
 
-class SignUpEmployers extends StatefulWidget {
+class SignUpWorkers extends StatefulWidget {
+  const SignUpWorkers({super.key});
+
   @override
-  _SignUpEmployersState createState() => _SignUpEmployersState();
+  SignUpScreenState createState() => SignUpScreenState();
 }
 
-class _SignUpEmployersState extends State<SignUpEmployers> {
+class SignUpScreenState extends State<SignUpWorkers> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController companyController = TextEditingController();
+  final TextEditingController jobController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
@@ -21,7 +22,7 @@ class _SignUpEmployersState extends State<SignUpEmployers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('تسجيل صاحب عمل'),
+        title: Text('إنشاء حساب'),
         backgroundColor: Colors.orange,
       ),
       body: Padding(
@@ -35,7 +36,7 @@ class _SignUpEmployersState extends State<SignUpEmployers> {
               TextFormField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: 'اسم صاحب العمل',
+                  labelText: 'الاسم',
                   prefixIcon: Icon(Icons.person),
                 ),
                 validator: (value) {
@@ -47,16 +48,16 @@ class _SignUpEmployersState extends State<SignUpEmployers> {
               ),
               SizedBox(height: 16),
 
-              // اسم الشركة
+              // المهنة
               TextFormField(
-                controller: companyController,
+                controller: jobController,
                 decoration: InputDecoration(
-                  labelText: 'اسم الشركة / المؤسسة',
-                  prefixIcon: Icon(Icons.business),
+                  labelText: 'المهنة',
+                  prefixIcon: Icon(Icons.work),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك أدخل اسم الشركة';
+                    return 'من فضلك أدخل المهنة';
                   }
                   return null;
                 },
@@ -123,35 +124,37 @@ class _SignUpEmployersState extends State<SignUpEmployers> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      // عرض رسالة نجاح صغيرة (SnackBar)
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('✅ تم إنشاء حساب صاحب العمل بنجاح'),
+                          content: Text('✅ تم تسجيل الحساب بنجاح'),
                           backgroundColor: Colors.green,
                           duration: Duration(seconds: 2),
                         ),
                       );
 
+                      // الانتقال فورًا لصفحة ChooseUserType
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => ChooseUserTypeScreen()),
                       );
                     }
                   },
-                  child: Text('أنشئ حساب'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
+                  child: Text('سجّل'),
                 ),
               ),
               SizedBox(height: 16),
 
-              // عندك حساب؟ سجل دخول
+              // رابط لتسجيل الدخول إذا عندك حساب
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginEmployers(userType: 'صاحب عمل')), // أو LoginEmployers لو فيه
+                    MaterialPageRoute(builder: (context) => ChooseUserTypeScreen()),
                   );
                 },
                 child: Text(

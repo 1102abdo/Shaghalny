@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Workers/LoginWorkers.dart'; // تأكد من المسار الصحيح للملف
+import 'package:shaghalny/Workers/login_workers.dart'; // تأكد من المسار الصحيح للملف
 
-class LogoutPages extends StatelessWidget {
+class LogoutPage extends StatelessWidget {
+  const LogoutPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,14 +22,15 @@ class LogoutPages extends StatelessWidget {
               ),
             );
           },
-          child: Text('تسجيل الخروج'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
+            backgroundColor: Colors.orange, // استخدام backgroundColor بدلاً من primary
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40),
             textStyle: TextStyle(fontSize: 18),
           ),
+          child: Text('تسجيل الخروج'),
         ),
       ),
     );
   }
 }
+

@@ -8,6 +8,8 @@ class PostedProfile extends StatelessWidget {
     {'title': 'تركيب كاميرات مراقبة', 'status': 'منتهي', 'projectId': '3'},
   ];
 
+  const PostedProfile({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +89,7 @@ class PostedProfile extends StatelessWidget {
 class ProjectDetailPage extends StatelessWidget {
   final String projectId;
 
-  const ProjectDetailPage({required this.projectId});
+  const ProjectDetailPage({super.key, required this.projectId});
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +122,7 @@ class ProjectDetailPage extends StatelessWidget {
 class EditProjectPage extends StatelessWidget {
   final String projectId;
 
-  const EditProjectPage({required this.projectId});
+  const EditProjectPage({super.key, required this.projectId});
 
   @override
   Widget build(BuildContext context) {
@@ -159,10 +161,10 @@ class EditProjectPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('حفظ التعديلات'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
               ),
+              child: Text('حفظ التعديلات'),
             ),
           ],
         ),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import './AvailableJobsPage.dart'; // تأكد من المسار
-import './SignUpWorkers.dart'; // تأكد من المسار الصحيح
+import 'available_jobs_page.dart'; // تأكد من المسار
+import 'sign_up_workers.dart'; // تأكد من المسار الصحيح
 
 class LoginWorkers extends StatefulWidget {
   final String userType;
 
-  LoginWorkers({Key? key, required this.userType}) : super(key: key);
+  const LoginWorkers({super.key, required this.userType});
 
   @override
-  _LoginWorkersState createState() => _LoginWorkersState();
+  LoginWorkersState createState() => LoginWorkersState();
 }
 
-class _LoginWorkersState extends State<LoginWorkers> {
+class LoginWorkersState extends State<LoginWorkers> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -23,6 +23,8 @@ class _LoginWorkersState extends State<LoginWorkers> {
 
       Future.delayed(Duration(seconds: 2), () {
         setState(() => _isLoading = false);
+
+        if (!mounted) return;
 
         // رسالة نجاح بشكل أنيق
         ScaffoldMessenger.of(context).showSnackBar(

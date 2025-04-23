@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Screens/ChooseUserType.dart'; // تأكد من استيراد الصفحة هنا
-import 'LoginWorkers.dart';
+import 'package:shaghalny/Employers/login_employers.dart';
+import 'package:shaghalny/Screens/choose_user_type.dart'; // تأكد من المسار
+// Removed duplicate import of 'login_employers.dart'
 
-class SignUpWorkers extends StatefulWidget {
+class SignUpEmployers extends StatefulWidget {
+  const SignUpEmployers({super.key});
+
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  SignUpEmployersState createState() => SignUpEmployersState();
 }
 
-class _SignUpScreenState extends State<SignUpWorkers> {
+class SignUpEmployersState extends State<SignUpEmployers> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController jobController = TextEditingController();
+  final TextEditingController companyController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
@@ -20,7 +23,7 @@ class _SignUpScreenState extends State<SignUpWorkers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('إنشاء حساب'),
+        title: Text('تسجيل صاحب عمل'),
         backgroundColor: Colors.orange,
       ),
       body: Padding(
@@ -34,7 +37,7 @@ class _SignUpScreenState extends State<SignUpWorkers> {
               TextFormField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: 'الاسم',
+                  labelText: 'اسم صاحب العمل',
                   prefixIcon: Icon(Icons.person),
                 ),
                 validator: (value) {
@@ -46,16 +49,16 @@ class _SignUpScreenState extends State<SignUpWorkers> {
               ),
               SizedBox(height: 16),
 
-              // المهنة
+              // اسم الشركة
               TextFormField(
-                controller: jobController,
+                controller: companyController,
                 decoration: InputDecoration(
-                  labelText: 'المهنة',
-                  prefixIcon: Icon(Icons.work),
+                  labelText: 'اسم الشركة / المؤسسة',
+                  prefixIcon: Icon(Icons.business),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك أدخل المهنة';
+                    return 'من فضلك أدخل اسم الشركة';
                   }
                   return null;
                 },
@@ -122,37 +125,35 @@ class _SignUpScreenState extends State<SignUpWorkers> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // عرض رسالة نجاح صغيرة (SnackBar)
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('✅ تم تسجيل الحساب بنجاح'),
+                          content: Text('✅ تم إنشاء حساب صاحب العمل بنجاح'),
                           backgroundColor: Colors.green,
                           duration: Duration(seconds: 2),
                         ),
                       );
 
-                      // الانتقال فورًا لصفحة ChooseUserType
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => ChooseUserTypeScreen()),
                       );
                     }
                   },
-                  child: Text('سجّل'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
+                  child: Text('أنشئ حساب'),
                 ),
               ),
               SizedBox(height: 16),
 
-              // رابط لتسجيل الدخول إذا عندك حساب
+              // عندك حساب؟ سجل دخول
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => ChooseUserTypeScreen()),
+                    MaterialPageRoute(builder: (context) => LoginEmployers(userType: 'صاحب عمل')), // أو LoginEmployers لو فيه
                   );
                 },
                 child: Text(

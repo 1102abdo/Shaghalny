@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-class EditProfilePage extends StatefulWidget {
+class EditProfile extends StatefulWidget {
   final String userName;
   final String userEmail;
   final String userJob;
 
-  const EditProfilePage({
+  const EditProfile({
     required this.userName,
     required this.userEmail,
     required this.userJob,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  EditProfileEmployerState createState() => EditProfileEmployerState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class EditProfileEmployerState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _emailController;
@@ -40,11 +40,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void _saveChanges() {
     if (_formKey.currentState?.validate() ?? false) {
-      // هنا يمكنك إضافة الكود لحفظ التعديلات، مثل إرسال البيانات إلى قاعدة بيانات أو تحديث الحالة.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('تم حفظ التعديلات بنجاح!')),
       );
-      Navigator.pop(context); 
+      Navigator.pop(context);
     }
   }
 
@@ -65,12 +64,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'اسم العامل',
+                  labelText: 'اسم صاحب الشغل',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك أدخل اسم العامل';
+                    return 'من فضلك أدخل اسم صاحب الشغل';
                   }
                   return null;
                 },
@@ -95,12 +94,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
               TextFormField(
                 controller: _jobController,
                 decoration: InputDecoration(
-                  labelText: 'المهنة',
+                  labelText: 'نوع الشغل أو التخصص',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك أدخل المهنة';
+                    return 'من فضلك أدخل نوع الشغل';
                   }
                   return null;
                 },
@@ -108,11 +107,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _saveChanges,
-                child: Text('حفظ التعديلات'),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.orange,
                 ),
+                child: Text('حفظ التعديلات'),
               ),
             ],
           ),

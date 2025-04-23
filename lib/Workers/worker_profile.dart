@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Workers/AvailableJobsPage.dart';
-import 'SettingsPage.dart'; // تأكد من استيراد صفحة الإعدادات
-import 'LogoutPage.dart';  // تأكد من استيراد صفحة تسجيل الخروج
-import 'EditProfilePage.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
+import 'package:shaghalny/Workers/available_jobs_page.dart';
+import 'settings_page.dart'; // تأكد من استيراد صفحة الإعدادات
+import 'logout_page.dart';  // تأكد من استيراد صفحة تسجيل الخروج
+import 'edit_profile_page.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
 
 class WorkerProfilePage extends StatelessWidget {
   final String userName;
@@ -13,8 +13,8 @@ class WorkerProfilePage extends StatelessWidget {
     required this.userName,
     required this.userEmail,
     required this.userJob,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

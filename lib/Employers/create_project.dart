@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'EmployerProfile.dart'; // الملف الشخصي لصاحب العمل
-import './SettingPages.dart';  // صفحة الإعدادات
+import 'employer_profile.dart'; // الملف الشخصي لصاحب العمل
+import 'setting_pages.dart';  // صفحة الإعدادات
 
 class CreateProject extends StatefulWidget {
   final String userName;
 
-  const CreateProject({required this.userName, Key? key}) : super(key: key);
+  const CreateProject({required this.userName, super.key});
 
   @override
-  _CreateProjectState createState() => _CreateProjectState();
+  CreateProjectState createState() => CreateProjectState();
 }
 
-class _CreateProjectState extends State<CreateProject> {
+class CreateProjectState extends State<CreateProject> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController workersCountController = TextEditingController();

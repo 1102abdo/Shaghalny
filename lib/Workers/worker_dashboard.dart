@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'workerProfile.dart'; // تأكد من أنك قد قمت بإنشاء هذه الصفحة
-import 'package:shaghalny/Workers/AvailableJobsPage.dart'; // تأكد من أنك قد قمت بإنشاء صفحة الوظائف المتاحة
-import 'EditProfilePage.dart';  // استيراد صفحة التعديل بشكل صحيح
+import 'worker_profile.dart'; // تأكد من أنك قد قمت بإنشاء هذه الصفحة
+//import 'package:shaghalny/Workers/available_jobs_page.dart'; // تأكد من أنك قد قمت بإنشاء صفحة الوظائف المتاحة
+import 'edit_profile_page.dart';  // استيراد صفحة التعديل بشكل صحيح
 
 class WorkerDashboard extends StatelessWidget {
   final String userName;
   final String userEmail;
   final String userJob;
 
-  WorkerDashboard({
+  const WorkerDashboard({super.key, 
     required this.userName,
     required this.userEmail,
     required this.userJob,

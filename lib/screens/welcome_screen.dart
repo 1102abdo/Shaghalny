@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/screens/ChooseUserType.dart';
+import 'package:shaghalny/screens/choose_user_type.dart';
 // import 'ChooseUserType.dart';
-import '../Workers/SignUpWorkers.dart';
 
 class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'Screens/WelcomeScreen.dart';
+import 'Screens/welcome_screen.dart';
 
 void main() {
   runApp(ShaghalnyApp());
 }
 
 class ShaghalnyApp extends StatelessWidget {
+  const ShaghalnyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
