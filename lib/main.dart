@@ -11,6 +11,7 @@ class ShaghalnyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       debugShowCheckedModeBanner: true,
       title: 'Shaghalny',
       theme: ThemeData(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'logout_page.dart';  // تأكد من استيراد صفحة تسجيل الخروج
-import 'edit_profile.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
+import 'package:shaghalny/Employers/employer_applications.dart';
+import 'logout_page.dart'; // تأكد من استيراد صفحة تسجيل الخروج
+import 'edit_profile.dart'; // تأكد من استيراد صفحة تعديل الملف الشخصي
 import 'create_project.dart'; // صفحة إنشاء مشروع جديد
 import 'posted_profile.dart'; // صفحة عرض المشاريع المنشورة
 import 'setting_pages.dart'; // تأكد من استيراد صفحة الإعدادات
@@ -46,22 +47,26 @@ class EmployerProfile extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text('البريد الإلكتروني: $userEmail', style: TextStyle(fontSize: 16)),
+            Text(
+              'البريد الإلكتروني: $userEmail',
+              style: TextStyle(fontSize: 16),
+            ),
             SizedBox(height: 8),
             Text('اسم الشركة: $companyName', style: TextStyle(fontSize: 16)),
             SizedBox(height: 32),
-            
+
             // تعديل الملف الشخصي
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditProfile(
-                      userName: userName,
-                      userEmail: userEmail,
-                      userJob: companyName,
-                    ),
+                    builder:
+                        (context) => EditProfile(
+                          userName: userName,
+                          userEmail: userEmail,
+                          userJob: companyName,
+                        ),
                   ),
                 );
               },
@@ -104,6 +109,25 @@ class EmployerProfile extends StatelessWidget {
               },
               icon: Icon(Icons.folder_open),
               label: Text('مشاريعي المنشورة'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+                foregroundColor: Colors.black,
+              ),
+            ),
+            SizedBox(height: 20),
+
+            // الطلبات المقدمة ← الكود الجديد
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EmployerApplications(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.list_alt),
+              label: Text('الطلبات المقدمة'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey[200],
                 foregroundColor: Colors.black,

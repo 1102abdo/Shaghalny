@@ -1,11 +1,110 @@
 import 'package:flutter/material.dart';
-import 'worker_profile.dart'; // تأكد إنك مكوّن الصفحة دي ومسميها كده
-import 'settings_page.dart'; // تأكد من استيراد صفحة الإعدادات
+import 'package:shaghalny/Workers/application_page.dart';
 
 class AvailableJobsPage extends StatelessWidget {
   final String userName;
 
-  const AvailableJobsPage({required this.userName, super.key});
+  // بيانات تجريبية للوظائف
+  final List<Map<String, dynamic>> jobs = [
+    {
+      'id': 1,
+      'title': 'مطور Flutter',
+      'company': 'شركة التقنية الحديثة',
+      'location': 'القاهرة',
+      'salary': '10,000 - 15,000 جنيه',
+      'type': 'دوام كامل',
+      'posted': 'منذ 3 أيام',
+    },
+    {
+      'id': 2,
+      'title': 'مصمم جرافيك',
+      'company': 'استوديو الإبداع',
+      'location': 'الإسكندرية',
+      'salary': '8,000 - 12,000 جنيه',
+      'type': 'دوام جزئي',
+      'posted': 'منذ يومين',
+    },
+  ];
+
+  AvailableJobsPage({required this.userName, super.key});
+
+  // دالة لبناء بطاقة الوظيفة
+  Widget _buildJobCard(Map<String, dynamic> job, BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  job['title'],
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange[800],
+                  ),
+                ),
+                Chip(
+                  label: Text(job['type'] ?? 'غير محدد'),
+                  backgroundColor: Colors.orange.withAlpha((0.2 * 255).toInt()),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.business, size: 18, color: Colors.grey),
+                SizedBox(width: 8),
+                Text(job['company']),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.location_on, size: 18, color: Colors.grey),
+                SizedBox(width: 8),
+                Text(job['location']),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.attach_money, size: 18, color: Colors.grey),
+                SizedBox(width: 8),
+                Text(job['salary']),
+              ],
+            ),
+            SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(job['posted'], style: TextStyle(color: Colors.grey)),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ApplicationPage(job: job),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                  ),
+                  child: Text('تقديم الآن'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,76 +113,11 @@ class AvailableJobsPage extends StatelessWidget {
         title: Text('أهلاً، $userName'),
         backgroundColor: Colors.orange,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.orange,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.person, size: 48, color: Colors.white),
-                  SizedBox(height: 8),
-                  Text(
-                    userName,
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  Text(
-                    'مرحباً بك!',
-                    style: TextStyle(fontSize: 14, color: Colors.white70),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('الملف الشخصي'),
-              onTap: () {
-                Navigator.pop(context); // يغلق الدروار
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WorkerProfilePage(
-                      userName: userName,
-                      userEmail: 'example@email.com', // تقدر تعدل حسب البيانات اللي معاك
-                      userJob: 'غير محدد',
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('الإعدادات'),
-              onTap: () {
-                Navigator.pop(context); // يغلق الدروار
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>  SettingsPage(), // الانتقال إلى صفحة الإعدادات
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('تسجيل الخروج'),
-              onTap: () {
-                Navigator.pop(context); // إغلاق القائمة
-                Navigator.pop(context); // الرجوع لشاشة تسجيل الدخول
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: Text(
-          'لا توجد بيانات حالياً',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
+      body: ListView.builder(
+        itemCount: jobs.length,
+        itemBuilder: (context, index) {
+          return _buildJobCard(jobs[index], context);
+        },
       ),
     );
   }
