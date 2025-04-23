@@ -102,10 +102,17 @@ class LoginWorkersState extends State<LoginWorkers> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'من فضلك أدخل البريد الإلكتروني';
-                    } else if (!RegExp(
+                    }
+                    // Format check
+                    else if (!RegExp(
                       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
                     ).hasMatch(value)) {
-                      return 'صيغة البريد الإلكتروني غير صحيحة'; // Consistent message
+                      return 'صيغة البريد الإلكتروني غير صحيحة';
+                    }
+                    // Domain existence check (example: require Gmail)
+                    else if (!value.endsWith('@gmail.com')) {
+                      // ← Add this
+                      return 'يجب استخدام بريد جيميل صحيح';
                     }
                     return null;
                   },
