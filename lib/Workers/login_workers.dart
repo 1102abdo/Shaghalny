@@ -45,9 +45,8 @@ class LoginWorkersState extends State<LoginWorkers> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => AvailableJobsPage(
-              userName: _emailController.text,
-            ),
+            builder:
+                (context) => AvailableJobsPage(userName: _emailController.text),
           ),
         );
       });
@@ -94,6 +93,7 @@ class LoginWorkersState extends State<LoginWorkers> {
                 // البريد الإلكتروني
                 TextFormField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'البريد الإلكتروني',
                     border: OutlineInputBorder(),
@@ -102,8 +102,10 @@ class LoginWorkersState extends State<LoginWorkers> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'من فضلك أدخل البريد الإلكتروني';
-                    } else if (!value.contains('@')) {
-                      return 'صيغة البريد غير صحيحة';
+                    } else if (!RegExp(
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                    ).hasMatch(value)) {
+                      return 'صيغة البريد الإلكتروني غير صحيحة'; // Consistent message
                     }
                     return null;
                   },
@@ -122,8 +124,12 @@ class LoginWorkersState extends State<LoginWorkers> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'من فضلك أدخل كلمة المرور';
-                    } else if (value.length < 6) {
-                      return 'كلمة المرور يجب أن تكون 6 أحرف أو أكثر';
+                    } else if (value.length < 8) {
+                      return 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+                    } else if (!value.contains(RegExp(r'[A-Z]'))) {
+                      return 'يجب أن تحتوي على حرف كبير واحد على الأقل';
+                    } else if (!value.contains(RegExp(r'[0-9]'))) {
+                      return 'يجب أن تحتوي على رقم واحد على الأقل';
                     }
                     return null;
                   },
@@ -134,22 +140,22 @@ class LoginWorkersState extends State<LoginWorkers> {
                 _isLoading
                     ? Center(child: CircularProgressIndicator())
                     : SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            'تسجيل الدخول',
-                            style: TextStyle(fontSize: 18),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
+                        child: Text(
+                          'تسجيل الدخول',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
+                    ),
 
                 // رابط الانتقال لصفحة التسجيل
                 SizedBox(height: 20),

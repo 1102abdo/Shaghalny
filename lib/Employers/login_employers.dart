@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'sign_up_employers.dart'; // استيراد صفحة التسجيل
-import 'create_project.dart';  // استيراد صفحة إنشاء المشروع
+import 'create_project.dart'; // استيراد صفحة إنشاء المشروع
 
 class LoginEmployers extends StatefulWidget {
   final String userType;
@@ -34,6 +34,7 @@ class LoginEmployersState extends State<LoginEmployers> {
               // البريد الإلكتروني
               TextFormField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'البريد الإلكتروني',
                   prefixIcon: Icon(Icons.email),
@@ -41,8 +42,10 @@ class LoginEmployersState extends State<LoginEmployers> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'من فضلك أدخل البريد الإلكتروني';
-                  } else if (!value.contains('@')) {
-                    return 'البريد الإلكتروني غير صالح';
+                  } else if (!RegExp(
+                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  ).hasMatch(value)) {
+                    return 'صيغة البريد الإلكتروني غير صحيحة'; // Consistent error message
                   }
                   return null;
                 },
@@ -60,8 +63,12 @@ class LoginEmployersState extends State<LoginEmployers> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'من فضلك أدخل كلمة المرور';
-                  } else if (value.length < 6) {
-                    return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                  } else if (value.length < 8) {
+                    return 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+                  } else if (!value.contains(RegExp(r'[A-Z]'))) {
+                    return 'يجب أن تحتوي على حرف كبير واحد على الأقل';
+                  } else if (!value.contains(RegExp(r'[0-9]'))) {
+                    return 'يجب أن تحتوي على رقم واحد على الأقل';
                   }
                   return null;
                 },
@@ -89,7 +96,8 @@ class LoginEmployersState extends State<LoginEmployers> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreateProject(userName: userName),
+                          builder:
+                              (context) => CreateProject(userName: userName),
                         ),
                       );
                     }

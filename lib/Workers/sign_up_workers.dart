@@ -14,21 +14,21 @@ class SignUpScreenState extends State<SignUpWorkers> {
   final TextEditingController jobController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('إنشاء حساب'),
-        backgroundColor: Colors.orange,
-      ),
+      appBar: AppBar(title: Text('إنشاء حساب'), backgroundColor: Colors.orange),
       body: Padding(
         padding: EdgeInsets.all(24),
         child: Form(
           key: _formKey,
+          autovalidateMode:
+              AutovalidateMode.onUserInteraction, // Enable real-time validation
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -67,6 +67,7 @@ class SignUpScreenState extends State<SignUpWorkers> {
               // البريد الإلكتروني
               TextFormField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'البريد الإلكتروني',
                   prefixIcon: Icon(Icons.email),
@@ -74,8 +75,10 @@ class SignUpScreenState extends State<SignUpWorkers> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'من فضلك أدخل البريد الإلكتروني';
-                  } else if (!value.contains('@')) {
-                    return 'البريد الإلكتروني غير صالح';
+                  } else if (!RegExp(
+                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  ).hasMatch(value)) {
+                    return 'صيغة البريد الإلكتروني غير صحيحة'; // Consistent error message
                   }
                   return null;
                 },
@@ -93,8 +96,12 @@ class SignUpScreenState extends State<SignUpWorkers> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'من فضلك أدخل كلمة المرور';
-                  } else if (value.length < 6) {
-                    return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                  } else if (value.length < 8) {
+                    return 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+                  } else if (!value.contains(RegExp(r'[A-Z]'))) {
+                    return 'يجب أن تحتوي على حرف كبير واحد على الأقل';
+                  } else if (!value.contains(RegExp(r'[0-9]'))) {
+                    return 'يجب أن تحتوي على رقم واحد على الأقل';
                   }
                   return null;
                 },
@@ -136,7 +143,9 @@ class SignUpScreenState extends State<SignUpWorkers> {
                       // الانتقال فورًا لصفحة ChooseUserType
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => ChooseUserTypeScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => ChooseUserTypeScreen(),
+                        ),
                       );
                     }
                   },
@@ -154,7 +163,9 @@ class SignUpScreenState extends State<SignUpWorkers> {
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => ChooseUserTypeScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => ChooseUserTypeScreen(),
+                    ),
                   );
                 },
                 child: Text(
