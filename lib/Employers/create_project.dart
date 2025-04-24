@@ -324,11 +324,13 @@ class CreateProjectState extends State<CreateProject> {
           if (image != null) {
             setState(() => _selectedImage = image);
           } else {
+            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('لم يتم اختيار صورة')),
             );
           }
         } catch (e) {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('حدث خطأ أثناء تحميل الصورة')),
           );
