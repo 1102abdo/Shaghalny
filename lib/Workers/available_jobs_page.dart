@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shaghalny/Workers/application_page.dart';
-
+import 'package:shaghalny/Workers/worker_profile.dart';
 class AvailableJobsPage extends StatelessWidget {
   final String userName;
 
@@ -26,7 +26,7 @@ class AvailableJobsPage extends StatelessWidget {
     },
   ];
 
-  AvailableJobsPage({required this.userName, super.key});
+  AvailableJobsPage({required this.userName, super.key, required String userEmail, required String userJob});
 
   // دالة لبناء بطاقة الوظيفة
   Widget _buildJobCard(Map<String, dynamic> job, BuildContext context) {
@@ -110,14 +110,61 @@ class AvailableJobsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('أهلاً، $userName'),
+  title: Text('أهلاً، $userName'),
+  backgroundColor: Colors.orange,
+actions: [
+  // Settings Icon
+  IconButton(
+    icon: Icon(Icons.settings),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SettingsPage()),
+      );
+    },
+  ),
+  // Profile Icon
+  IconButton(
+    icon: Icon(Icons.person),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WorkerProfilePage(
+            userName: userName,
+            userEmail: "user@gmail.com", // Replace with actual email
+            userJob: "المهنة", // Replace with actual job
+          ),
+        ),
+      );
+    },
+  ),
+],
+),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: jobs.length,
+          itemBuilder: (context, index) {
+            return _buildJobCard(jobs[index], context);
+          },
+        ),
+      ),
+    );
+  }
+}
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('الإعدادات'),
         backgroundColor: Colors.orange,
       ),
-      body: ListView.builder(
-        itemCount: jobs.length,
-        itemBuilder: (context, index) {
-          return _buildJobCard(jobs[index], context);
-        },
+      body: Center(
+        child: Text('صفحة الإعدادات'),
       ),
     );
   }

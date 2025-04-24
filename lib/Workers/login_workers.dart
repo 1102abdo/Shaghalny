@@ -21,7 +21,7 @@ class LoginWorkersState extends State<LoginWorkers> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(Duration(seconds: 2)) ; { 
         setState(() => _isLoading = false);
 
         if (!mounted) return;
@@ -45,11 +45,32 @@ class LoginWorkersState extends State<LoginWorkers> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder:
-                (context) => AvailableJobsPage(userName: _emailController.text),
+            builder: (context) => AvailableJobsPage(
+      userName: _emailController.text,
+      // Add these if they exist in your AvailableJobsPage constructor:
+      userEmail: _emailController.text,
+      userJob: "المهنة", // You might need to collect this during login
+    ),
+  ),
+);
+     }
+    
+    } else {  // إذا كانت البيانات غير صحيحة
+      setState(() => _isLoading = false);
+      // رسالة خطأ بشكل أنيق
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 8),
+              Text('خطأ في تسجيل الدخول'),
+            ],
           ),
-        );
-      });
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -190,3 +211,4 @@ class LoginWorkersState extends State<LoginWorkers> {
     );
   }
 }
+
