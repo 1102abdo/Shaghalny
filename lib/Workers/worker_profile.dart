@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shaghalny/Workers/available_jobs_page.dart';
-import 'package:shaghalny/Workers/available_jobs_page.dart' as settings;
+import 'package:shaghalny/Workers/settings_page.dart';
+// import 'package:shaghalny/Workers/available_jobs_page.dart' as settings;
 import 'logout_page.dart';  // تأكد من استيراد صفحة تسجيل الخروج
 import 'edit_profile_page.dart';  // تأكد من استيراد صفحة تعديل الملف الشخصي
 
@@ -93,7 +94,7 @@ class WorkerProfilePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => settings.SettingsPage()),
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
                 );
               },
               icon: Icon(Icons.settings),

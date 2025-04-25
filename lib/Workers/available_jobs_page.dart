@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shaghalny/Workers/application_page.dart';
+import 'package:shaghalny/Workers/settings_page.dart';
 import 'package:shaghalny/Workers/worker_profile.dart';
 class AvailableJobsPage extends StatelessWidget {
   final String userName;
@@ -153,19 +154,19 @@ actions: [
     );
   }
 }
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+// class SettingsPage extends StatelessWidget {
+//   const SettingsPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('الإعدادات'),
-        backgroundColor: Colors.orange,
-      ),
-      body: Center(
-        child: Text('صفحة الإعدادات'),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('الإعدادات'),
+//         backgroundColor: Colors.orange,
+//       ),
+//       body: Center(
+//         child: Text('صفحة الإعدادات'),
+//       ),
+//     );
+//   }
+// }
