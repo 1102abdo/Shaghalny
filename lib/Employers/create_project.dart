@@ -19,6 +19,7 @@ class CreateProjectState extends State<CreateProject> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _workersController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Image Handling
@@ -66,6 +67,7 @@ class CreateProjectState extends State<CreateProject> {
           'title': _titleController.text,
           'description': _descriptionController.text,
           'workers': int.parse(_workersController.text),
+          'address': _addressController.text,
           'status': 'في انتظار الموافقة',
           'image': _selectedImage?.path,
           'date': DateTime.now().toString(),
@@ -77,14 +79,16 @@ class CreateProjectState extends State<CreateProject> {
       _clearForm();
     }
   }
-
-  // Clear form fields
-  void _clearForm() {
-    _titleController.clear();
-    _descriptionController.clear();
-    _workersController.clear();
-    setState(() => _selectedImage = null);
-  }
+// Clear form fields
+// (Removed duplicate method)
+// Clear form fields
+void _clearForm() {
+  _titleController.clear();
+  _descriptionController.clear();
+  _workersController.clear();
+  _addressController.clear();
+  setState(() => _selectedImage = null);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -219,6 +223,16 @@ class CreateProjectState extends State<CreateProject> {
                     const SizedBox(height: 15),
                     _buildWorkersField(),
                     const SizedBox(height: 15),
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        labelText: 'العنوان *',
+                        prefixIcon: Icon(Icons.location_on),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'يرجى إدخال العنوان' : null,
+                    ),
+                    const SizedBox(height: 15),
                     _buildImageUpload(),
                   ],
                 ),
@@ -250,6 +264,7 @@ class CreateProjectState extends State<CreateProject> {
       validator: (value) => value!.isEmpty ? 'يرجى إدخال العنوان' : null,
     );
   }
+
 
   Widget _buildDescriptionField() {
     return TextFormField(
