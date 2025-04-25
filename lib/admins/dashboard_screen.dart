@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
+  const AdminDashboardScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AdminDashboardScreenState createState() => _AdminDashboardScreenState();
 }
 
