@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:file_picker/file_picker.dart';
 
 class ApplicationPage extends StatefulWidget {
@@ -19,7 +20,8 @@ class ApplicationPageState extends State<ApplicationPage> {
   final TextEditingController _skillsController = TextEditingController();
   String? _cvPath;
 
-  Future<void> _uploadCV() async {
+  // ignore: non_constant_identifier_names
+  Future<void> _uploadCV(dynamic FilePicker, dynamic FileType) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
@@ -136,7 +138,7 @@ class ApplicationPageState extends State<ApplicationPage> {
                 ),
                 SizedBox(height: 15),
                 ElevatedButton.icon(
-                  onPressed: _uploadCV,
+                  onPressed: () => _uploadCV(FilePicker, FileType),
                   icon: Icon(Icons.upload),
                   label: Text('رفع السيرة الذاتية (PDF)'),
                   style: ElevatedButton.styleFrom(

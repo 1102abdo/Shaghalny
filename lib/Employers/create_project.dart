@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: unused_import
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -21,13 +22,16 @@ class CreateProjectState extends State<CreateProject> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Image Handling
-  XFile? _selectedImage;
+  File? _selectedImage;
 
   // Project Data
   List<Map<String, dynamic>> _projects = [];
   String _jobType = 'دوام كامل'; // Default job type
 
   final TextEditingController salaryController = TextEditingController();
+  
+  // ignore: non_constant_identifier_names
+  get SharedPreferences => null;
 
   @override
   void initState() {
@@ -320,7 +324,7 @@ class CreateProjectState extends State<CreateProject> {
     return GestureDetector(
       onTap: () async {
         try {
-          final XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+          final File? image = (await ImagePicker().pickImage(source: ImageSource.gallery)) as File?;
           if (image != null) {
             setState(() => _selectedImage = image);
           } else {
