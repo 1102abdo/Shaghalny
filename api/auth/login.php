@@ -1,58 +1,56 @@
 <?php
-session_start();
-$errors = [];
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../users/classes.php';
 
-// التحقق من الإيميل والباسورد
-if (empty($_REQUEST["email"])) $errors["login"] = "empty field";
-if (empty($_REQUEST["password"])) $errors["login"] = "empty field";
+try {
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    // Validate input
+    if (empty($data['email']) || empty($data['password'])) {
+        throw new Exception('All fields are required', 400);
+    }
 
-// إذا كان في أخطاء في المدخلات
-if (!empty($errors)) {
-    echo json_encode(['success' => false, 'message' => 'emptyfield']);
-    exit;
-}
+    $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
+    $password = $data['password'];
 
-require_once("classes.php");
+    // Get user securely
+    $user = User::login($email, $password);
 
-// محاولة تسجيل الدخول
-$user = User::login($_REQUEST["email"], md5($_REQUEST["password"]));
+    if (!$user) {
+        throw new Exception('Invalid credentials', 401);
+    }
 
-// إذا كانت نتيجة التسجيل فارغة أو المستخدم مش موجود
-if (empty($user)) {
-    echo json_encode(['success' => false, 'message' => 'no user']);
-    exit;
-}
+    if ($user->ban) {
+        throw new Exception('Account suspended', 403);
+    }
 
-// إذا كان المستخدم محظور
-if ($user->ban == 1) {
-    echo json_encode(['success' => false, 'message' => 'ban']);
-    exit;
-}
-
-// إذا كان كل شيء تمام، نقوم بإرجاع البيانات للمستخدم
-$_SESSION["user"] = serialize($user);
-
-// الرد في حالة نجاح الدخول
-echo json_encode([
-    'success' => true,
-    'message' => 'login successful',
-    'user' => [
-        'id' => $user->id,
-        'name' => $user->name,
-        'email' => $user->email,
+    // Generate JWT
+    $payload = [
+        'iss' => $_SERVER['HTTP_HOST'],
+        'iat' => time(),
+        'exp' => time() + 3600,
+        'sub' => $user->id,
         'role' => $user->role
-    ]
-]);
-// After successful login
-$payload = [
-    'iat' => time(),
-    'exp' => time() + 3600,
-    'data' => [
-        'id' => $user->id,
-        'role' => $user->role
-    ]
-];
-$jwt = JWT::encode($payload, SECRET_KEY);
-echo json_encode(['token' => $jwt]);
+    ];
 
-?>
+    $jwt = JWT::encode($payload, JWT_SECRET, JWT_ALGO);
+
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'token' => $jwt,
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role
+        ]
+    ]);
+
+} catch (Exception $e) {
+    http_response_code($e->getCode() ?: 500);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
+}
