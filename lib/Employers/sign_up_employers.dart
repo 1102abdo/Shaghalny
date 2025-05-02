@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shaghalny/Employers/login_employers.dart';
 import 'package:shaghalny/Screens/choose_user_type.dart'; // تأكد من المسار
-// Removed duplicate import of 'login_employers.dart'
+import '../services/api_service.dart';
 
 class SignUpEmployers extends StatefulWidget {
   const SignUpEmployers({super.key});
@@ -17,6 +17,8 @@ class SignUpEmployersState extends State<SignUpEmployers> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
+  bool _isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -142,29 +144,86 @@ class SignUpEmployersState extends State<SignUpEmployers> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('✅ تم إنشاء حساب صاحب العمل بنجاح'),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                              });
 
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChooseUserTypeScreen(),
-                        ),
-                      );
-                    }
-                  },
+                              try {
+                                final response = await ApiService.register(
+                                  name: nameController.text,
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                  passwordConfirmation:
+                                      confirmPasswordController.text,
+                                  company: companyController.text,
+                                );
+
+                                if (response['status'] == 201 &&
+                                    response['data'] != null) {
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        '✅ تم إنشاء حساب صاحب العمل بنجاح',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ChooseUserTypeScreen(),
+                                    ),
+                                  );
+                                } else {
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        '❌ فشل إنشاء الحساب: ${response['msg'] ?? 'خطأ غير معروف'}',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (!mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('❌ خطأ في الاتصال: $e'),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
+                              } finally {
+                                if (mounted) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                              }
+                            }
+                          },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: Text('أنشئ حساب'),
+                  child:
+                      _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text('أنشئ حساب'),
                 ),
               ),
               SizedBox(height: 16),

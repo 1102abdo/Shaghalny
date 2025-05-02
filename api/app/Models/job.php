@@ -40,4 +40,3 @@ class Job extends Model
         return $this->belongsToMany(Worker::class, 'jobs_has_workers', 'jobs_id', 'workers_id');
     }
 }
-

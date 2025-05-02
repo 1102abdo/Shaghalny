@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'sign_up_employers.dart'; // استيراد صفحة التسجيل
 import 'create_project.dart'; // استيراد صفحة إنشاء المشروع
+import '../providers/auth_provider.dart';
+import '../services/api_service.dart';
+import 'package:provider/provider.dart';
 
 class LoginEmployers extends StatefulWidget {
   final String userType;
@@ -14,6 +17,7 @@ class LoginEmployers extends StatefulWidget {
 class LoginEmployersState extends State<LoginEmployers> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -86,34 +90,87 @@ class LoginEmployersState extends State<LoginEmployers> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('✅ تم تسجيل الدخول بنجاح'),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                              });
 
-                      // الحصول على البريد الإلكتروني كـ userName
-                      String userName = emailController.text;
+                              try {
+                                final response = await ApiService.login(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                );
 
-                      // الانتقال إلى صفحة إنشاء مشروع مع تمرير userName
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => CreateProject(userName: userName),
-                        ),
-                      );
-                    }
-                  },
+                                if (response['status'] == 200 &&
+                                    response['data'] != null) {
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('✅ تم تسجيل الدخول بنجاح'),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+
+                                  // الحصول على البريد الإلكتروني كـ userName
+                                  String userName =
+                                      response['data']['name'] ??
+                                      emailController.text;
+
+                                  // الانتقال إلى صفحة إنشاء مشروع مع تمرير userName
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              CreateProject(userName: userName),
+                                    ),
+                                  );
+                                } else {
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        '❌ فشل تسجيل الدخول: ${response['msg'] ?? 'خطأ غير معروف'}',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (!mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('❌ خطأ في الاتصال: $e'),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
+                              } finally {
+                                if (mounted) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                              }
+                            }
+                          },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: Text('تسجيل دخول'),
+                  child:
+                      _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text('تسجيل دخول'),
                 ),
               ),
               const SizedBox(height: 16),

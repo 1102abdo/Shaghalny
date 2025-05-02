@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:file_picker/file_picker.dart';
 
 class ApplicationPage extends StatefulWidget {
@@ -20,13 +19,12 @@ class ApplicationPageState extends State<ApplicationPage> {
   final TextEditingController _skillsController = TextEditingController();
   String? _cvPath;
 
-  // ignore: non_constant_identifier_names
-  Future<void> _uploadCV(dynamic FilePicker, dynamic FileType) async {
+  Future<void> _uploadCV() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-    
+
     if (result != null) {
       setState(() {
         _cvPath = result.files.single.path;
@@ -92,7 +90,9 @@ class ApplicationPageState extends State<ApplicationPage> {
                   ),
                   validator: (value) {
                     if (value!.isEmpty) return 'مطلوب';
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
                       return 'بريد إلكتروني غير صالح';
                     }
                     return null;
@@ -138,7 +138,7 @@ class ApplicationPageState extends State<ApplicationPage> {
                 ),
                 SizedBox(height: 15),
                 ElevatedButton.icon(
-                  onPressed: () => _uploadCV(FilePicker, FileType),
+                  onPressed: _uploadCV,
                   icon: Icon(Icons.upload),
                   label: Text('رفع السيرة الذاتية (PDF)'),
                   style: ElevatedButton.styleFrom(
@@ -186,10 +186,7 @@ class ApplicationPageState extends State<ApplicationPage> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(width: 10),
           Text(value),
         ],

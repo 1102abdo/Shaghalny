@@ -23,11 +23,11 @@ class AuthController extends Controller
             if ($validate->fails()) {
                 return ApiResponse::sendResponse(422,'Register Validation Error' , $validate->messages()->all());
                }
-                
+
             $user = User::create([
                 'name'  =>  $request->name,
                 'email'  =>  $request->email,
-                'password'  =>  $request->password,
+                'password'  =>  bcrypt($request->password),
                 'company'  =>  $request->company,
             ]);
 
@@ -37,8 +37,8 @@ class AuthController extends Controller
             $data['company'] = $user->company;
             return ApiResponse::sendResponse(201,'created Successfully' , $data);
         }
-   
-   
+
+
         public function login(Request $request){
             $validate = Validator::make($request->all(),[
             'email' => ['required','email','max:255'],
@@ -64,11 +64,11 @@ class AuthController extends Controller
 
 
         public function logout(Request $request){
-        
+
             $request->user()->currentAccessToken()->delete();
             return ApiResponse::sendResponse(200,'Logged out Successfully' , []);
 
         }
-    
-          
+
+
 }
