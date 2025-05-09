@@ -74,6 +74,9 @@ Route::controller(AdminController::class)->prefix('admin')->group(function(){
     Route::middleware('auth:sanctum')->group(function(){
         Route::get('/users', 'getUsers');
         Route::get('/posts', 'getPosts');
+        Route::put('/users/{userId}/toggle-ban', 'toggleUserBan');
+        Route::delete('/users/{userId}', 'deleteUser');
+        Route::delete('/posts/{postId}', 'deletePost');
         // Other admin-only endpoints
     });
 });

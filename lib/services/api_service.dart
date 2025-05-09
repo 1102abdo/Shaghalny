@@ -4,8 +4,10 @@ import 'dart:math';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as _client;
+import 'package:http/http.dart' as client;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
+import '../config/api_config.dart';
 
 class ApiService {
   // Whether to use mock API mode (offline mode)
@@ -24,11 +26,22 @@ class ApiService {
 
   // Base URL configuration
   static String _baseUrl =
-      'http://10.0.2.2:8000/api'; // Default for Android emulator
+      'http://10.0.2.2:8000/api'; // Default URL that will be updated
 
   // Allow changing the base URL based on environment or configuration
-  static void setBaseUrl(String url) {
+  static Future<void> setBaseUrl(String url) async {
     _baseUrl = url;
+    print('API base URL set to: $_baseUrl');
+    // Save custom URL if it's different from default development URLs
+    if (!url.contains('10.0.2.2') && !url.contains('localhost')) {
+      await ApiConfig.setCustomDevUrl(url);
+    }
+  }
+
+  // Initialize the API service with the correct base URL
+  static Future<void> initialize() async {
+    _baseUrl = await ApiConfig.getBaseUrl();
+    print('API Service initialized with base URL: $_baseUrl');
   }
 
   // Get current base URL
@@ -1134,12 +1147,12 @@ class ApiService {
   }) async {
     try {
       final adminToken = await getAdminToken();
-      
+
       if (adminToken == null) {
         return {
           'status': 401,
           'msg': 'Admin authentication required',
-          'data': null
+          'data': null,
         };
       }
 
@@ -1150,15 +1163,15 @@ class ApiService {
       };
 
       final uri = Uri.parse('$_baseUrl/$endpoint');
-      
+
       http.Response response;
-      
+
       switch (method.toUpperCase()) {
         case 'GET':
-          response = await _client.get(uri, headers: headers);
+          response = await client.get(uri, headers: headers);
           break;
         case 'POST':
-          response = await _client.post(
+          response = await client.post(
             uri,
             headers: headers,
             body: data != null ? json.encode(data) : null,

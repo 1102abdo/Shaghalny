@@ -3,7 +3,7 @@ import 'package:shaghalny/admins/dashboard_screen.dart';
 import 'package:shaghalny/services/api_service.dart';
 
 class AdminLogin extends StatefulWidget {
-  const AdminLogin({Key? key}) : super(key: key);
+  const AdminLogin({super.key});
 
   @override
   _AdminLoginState createState() => _AdminLoginState();
@@ -25,7 +25,6 @@ class _AdminLoginState extends State<AdminLogin> {
     });
 
     try {
-      // You'll need to create this endpoint in your API
       final response = await ApiService.request(
         method: 'POST',
         endpoint: 'admin/login',
@@ -40,26 +39,38 @@ class _AdminLoginState extends State<AdminLogin> {
         // Store admin token
         if (response['data']['token'] != null) {
           await ApiService.storeAdminToken(response['data']['token']);
-        }
 
-        // Navigate to admin dashboard
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
-        );
+          // Check if user has admin role
+          if (response['data']['role'] == 'admin') {
+            // Navigate to admin dashboard
+            if (!mounted) return;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AdminDashboardScreen(),
+              ),
+            );
+          } else {
+            setState(() {
+              _errorMessage = 'غير مصرح: مطلوب صلاحيات المسؤول';
+            });
+          }
+        }
       } else {
         setState(() {
-          _errorMessage = response['msg'] ?? 'Login failed. Please try again.';
+          _errorMessage = response['msg'] ?? 'فشل تسجيل الدخول. حاول مرة أخرى.';
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'An error occurred: $e';
+        _errorMessage = 'حدث خطأ: $e';
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -67,84 +78,119 @@ class _AdminLoginState extends State<AdminLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Login'),
+        title: Text('تسجيل دخول المسؤول'),
         backgroundColor: Color(0xFFFF9800),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.admin_panel_settings,
-                size: 80,
-                color: Color(0xFFFF9800),
-              ),
-              SizedBox(height: 24),
-              
-              // Email field
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Admin Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.admin_panel_settings,
+                  size: 100,
+                  color: Color(0xFFFF9800),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              
-              // Password field
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 24),
-              
-              // Error message
-              if (_errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text(
-                    _errorMessage!,
-                    style: TextStyle(color: Colors.red),
+                SizedBox(height: 32),
+
+                // Email field
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'البريد الإلكتروني للمسؤول',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: Icon(Icons.email),
+                    filled: true,
+                    fillColor: Colors.grey[50],
                   ),
+                  keyboardType: TextInputType.emailAddress,
+                  textDirection: TextDirection.ltr,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'الرجاء إدخال البريد الإلكتروني';
+                    }
+                    return null;
+                  },
                 ),
-              
-              // Login button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
+                SizedBox(height: 20),
+
+                // Password field
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'كلمة المرور',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: Icon(Icons.lock),
+                    filled: true,
+                    fillColor: Colors.grey[50],
+                  ),
+                  obscureText: true,
+                  textDirection: TextDirection.ltr,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'الرجاء إدخال كلمة المرور';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 24),
+
+                // Error message
+                if (_errorMessage != null)
+                  Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red[200]!),
+                    ),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red[700]),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                SizedBox(height: 24),
+
+                // Login button
+                ElevatedButton(
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFFF9800),
                     padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
                   ),
-                  child: _isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text('Login as Admin'),
+                  child:
+                      _isLoading
+                          ? SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : Text(
+                            'تسجيل الدخول كمسؤول',
+                            style: TextStyle(fontSize: 16),
+                          ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

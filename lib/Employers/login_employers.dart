@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shaghalny/services/api_service.dart';
+import 'package:shaghalny/admins/dashboard_screen.dart';
 import 'sign_up_employers.dart'; // استيراد صفحة التسجيل
 import 'create_project.dart'; // استيراد صفحة إنشاء المشروع
 // استيراد صفحة الملف الشخصي
@@ -18,8 +19,108 @@ class LoginEmployersState extends State<LoginEmployers> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isLoading = false;
+  String? _errorMessage;
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Try admin login first
+      final adminResponse = await ApiService.request(
+        method: 'POST',
+        endpoint: 'admin/login',
+        requiresAuth: false,
+        data: {
+          'email': emailController.text,
+          'password': passwordController.text,
+        },
+      );
+
+      if (adminResponse['status'] == 200 &&
+          adminResponse['data'] != null &&
+          adminResponse['data']['role'] == 'admin') {
+        // Store admin token
+        await ApiService.storeAdminToken(adminResponse['data']['token']);
+
+        if (!mounted) return;
+
+        // Navigate to admin dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminDashboardScreen()),
+        );
+        return;
+      }
+
+      // If not admin, try employer login
+      final response = await ApiService.login(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      if (response['status'] == 200 && response['data'] != null) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ تم تسجيل الدخول بنجاح'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        String userName = response['data']['name'] ?? emailController.text;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateProject(userName: userName),
+          ),
+        );
+      } else {
+        if (!mounted) return;
+
+        setState(() {
+          _errorMessage = response['msg'] ?? 'فشل تسجيل الدخول. حاول مرة أخرى.';
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ فشل تسجيل الدخول: ${_errorMessage}'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _errorMessage = 'حدث خطأ: $e';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ خطأ في الاتصال: $e'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +143,11 @@ class LoginEmployersState extends State<LoginEmployers> {
                 decoration: InputDecoration(
                   labelText: 'البريد الإلكتروني',
                   prefixIcon: Icon(Icons.email),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -70,6 +176,11 @@ class LoginEmployersState extends State<LoginEmployers> {
                 decoration: InputDecoration(
                   labelText: 'كلمة المرور',
                   prefixIcon: Icon(Icons.lock),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -86,98 +197,56 @@ class LoginEmployersState extends State<LoginEmployers> {
               ),
               const SizedBox(height: 32),
 
+              // Error message
+              if (_errorMessage != null)
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red[200]!),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: Colors.red[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+              const SizedBox(height: 32),
+
               // زر تسجيل الدخول
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _isLoading
-                          ? null
-                          : () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                _isLoading = true;
-                              });
-
-                              try {
-                                final response = await ApiService.login(
-                                  email: emailController.text,
-                                  password: passwordController.text,
-                                );
-
-                                if (response['status'] == 200 &&
-                                    response['data'] != null) {
-                                  if (!mounted) return;
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('✅ تم تسجيل الدخول بنجاح'),
-                                      backgroundColor: Colors.green,
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-
-                                  // الحصول على البريد الإلكتروني كـ userName
-                                  String userName =
-                                      response['data']['name'] ??
-                                      emailController.text;
-
-                                  // الانتقال إلى صفحة لوحة التحكم (dashboard)
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              CreateProject(userName: userName),
-                                    ),
-                                  );
-                                } else {
-                                  if (!mounted) return;
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '❌ فشل تسجيل الدخول: ${response['msg'] ?? 'خطأ غير معروف'}',
-                                      ),
-                                      backgroundColor: Colors.red,
-                                      duration: Duration(seconds: 3),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                if (!mounted) return;
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('❌ خطأ في الاتصال: $e'),
-                                    backgroundColor: Colors.red,
-                                    duration: Duration(seconds: 3),
-                                  ),
-                                );
-                              } finally {
-                                if (mounted) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                }
-                              }
-                            }
-                          },
+                  onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child:
                       _isLoading
-                          ? CircularProgressIndicator(color: Colors.white)
+                          ? SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
                           : Text('تسجيل دخول'),
                 ),
               ),
               const SizedBox(height: 16),
 
               // رابط للتسجيل إذا ليس لديك حساب
-              GestureDetector(
-                onTap: () {
+              TextButton(
+                onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SignUpEmployers()),
@@ -185,7 +254,7 @@ class LoginEmployersState extends State<LoginEmployers> {
                 },
                 child: Text(
                   'ليس لديك حساب؟ سجل هنا',
-                  style: TextStyle(color: Colors.grey[700]),
+                  style: TextStyle(color: Colors.orange),
                 ),
               ),
             ],

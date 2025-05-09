@@ -7,6 +7,7 @@ class Worker {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? token;
+  final String? role;
 
   Worker({
     this.id,
@@ -17,6 +18,7 @@ class Worker {
     this.createdAt,
     this.updatedAt,
     this.token,
+    this.role,
   });
 
   factory Worker.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,7 @@ class Worker {
       job: json['job'] ?? '',
       banned: json['ban'] == '1' || json['ban'] == 1 || json['ban'] == true,
       token: json['token'],
+      role: json['role'],
       createdAt:
           json['created_at'] != null
               ? DateTime.parse(json['created_at'])
@@ -89,6 +92,7 @@ class Worker {
       'job': job,
       'ban': banned ? '1' : '0',
       'token': token,
+      'role': role,
     };
   }
 }

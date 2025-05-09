@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io' if (dart.library.html) 'dart:html' as platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shaghalny/providers/auth_provider.dart';
