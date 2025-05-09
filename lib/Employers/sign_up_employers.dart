@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shaghalny/Employers/login_employers.dart';
-import 'package:shaghalny/Screens/choose_user_type.dart'; // تأكد من المسار
+// تأكد من المسار
 import '../services/api_service.dart';
+import 'create_project.dart';
 
 class SignUpEmployers extends StatefulWidget {
   const SignUpEmployers({super.key});
@@ -181,7 +182,9 @@ class SignUpEmployersState extends State<SignUpEmployers> {
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => ChooseUserTypeScreen(),
+                                          (context) => CreateProject(
+                                            userName: nameController.text,
+                                          ),
                                     ),
                                   );
                                 } else {

@@ -10,18 +10,31 @@ class ApplicationResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
-        return[
-            // 'worker_name'        =>        $this->worker->name , //to get name worker from worke model 
-            'name'               =>        $this->name,
-            'job_title'          =>        $this->job->title ,
-            'email'              =>        $this->email,
-            'phone'              =>        $this->phone,
-            'experience'         =>        $this->experience,
-            'skills'             =>        $this->skills,
-            'cv'                 =>        $this->cv,
-        ];     }
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'experience' => $this->experience,
+            'skills' => $this->skills,
+            'cv' => $this->CV,
+            'status' => $this->status,
+            'bin' => $this->bin,
+            'jobs_id' => $this->jobs_id,
+            'workers_id' => $this->workers_id,
+            'job_title' => $this->whenLoaded('job', function () {
+                return $this->job->title;
+            }),
+            'worker_name' => $this->whenLoaded('worker', function () {
+                return $this->worker->name;
+            }),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
+    }
 }

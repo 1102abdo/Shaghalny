@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('skills')->nullable();
             $table->string('CV')->nullable();
             $table->enum('bin', ['0', '1'])->default('0');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
             $table->foreignId('jobs_id')->constrained('jobss');
             $table->foreignId('workers_id')->constrained('workers'); 
             $table->timestamps();

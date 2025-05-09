@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('picture')->nullable(); 
             $table->foreignId('users_id')->constrained('users'); 
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
             $table->timestamps();
         });
     }

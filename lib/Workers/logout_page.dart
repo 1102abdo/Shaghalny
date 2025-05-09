@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shaghalny/Workers/login_workers.dart'; // تأكد من المسار الصحيح للملف
+import 'package:provider/provider.dart';
+import 'package:shaghalny/Screens/choose_user_type.dart';
+import 'package:shaghalny/providers/auth_provider.dart';
 
 class LogoutPage extends StatelessWidget {
   const LogoutPage({super.key});
@@ -12,25 +14,64 @@ class LogoutPage extends StatelessWidget {
         backgroundColor: Colors.orange,
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // العودة لشاشة تسجيل الدخول بعد الخروج
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginWorkers(userType: 'عامل'), // تأكد من أن LoginScreen يقبل هذا المتغير
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'هل تريد تسجيل الخروج؟',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                // Show loading indicator
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder:
+                      (context) => Center(
+                        child: CircularProgressIndicator(color: Colors.orange),
+                      ),
+                );
+
+                // Get the auth provider and logout
+                final authProvider = Provider.of<AuthProvider>(
+                  context,
+                  listen: false,
+                );
+                await authProvider.logout();
+
+                // Dismiss loading dialog and navigate to the welcome screen
+                Navigator.of(context).pop();
+
+                // Navigate to choose user type screen and remove all previous routes
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => ChooseUserTypeScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40),
+                textStyle: TextStyle(fontSize: 18),
               ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange, // استخدام backgroundColor بدلاً من primary
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40),
-            textStyle: TextStyle(fontSize: 18),
-          ),
-          child: Text('تسجيل الخروج'),
+              child: Text('تسجيل الخروج'),
+            ),
+            SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'إلغاء',
+                style: TextStyle(color: Colors.grey[700], fontSize: 16),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
-

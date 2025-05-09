@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+import '../services/api_service.dart';
 
 class EditProfile extends StatefulWidget {
   final String userName;
@@ -21,6 +24,7 @@ class EditProfileEmployerState extends State<EditProfile> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _jobController;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,12 +42,51 @@ class EditProfileEmployerState extends State<EditProfile> {
     super.dispose();
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     if (_formKey.currentState?.validate() ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('تم حفظ التعديلات بنجاح!')),
-      );
-      Navigator.pop(context);
+      setState(() => _isLoading = true);
+      
+      try {
+        // Get the auth provider
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+        // Create request data
+        final data = {
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'company': _jobController.text,
+        };
+
+        // Call API to update profile
+        final response = await ApiService.updateUserProfile(data);
+
+        if (response['status'] >= 200 && response['status'] < 300) {
+          // Refresh user data in the provider
+          await authProvider.refreshUserData();
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('تم حفظ التعديلات بنجاح!')));
+
+          // Return true to indicate successful update
+          Navigator.pop(context, true);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'فشل في حفظ التعديلات: ${response['message'] ?? 'خطأ غير معروف'}',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('حدث خطأ: $e'), backgroundColor: Colors.red),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -64,12 +107,12 @@ class EditProfileEmployerState extends State<EditProfile> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'اسم صاحب الشغل',
+                  labelText: 'اسم صاحب العمل',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك أدخل اسم صاحب الشغل';
+                    return 'من فضلك أدخل اسم صاحب العمل';
                   }
                   return null;
                 },
@@ -94,24 +137,30 @@ class EditProfileEmployerState extends State<EditProfile> {
               TextFormField(
                 controller: _jobController,
                 decoration: InputDecoration(
-                  labelText: 'نوع الشغل أو التخصص',
+                  labelText: 'اسم الشركة',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك أدخل نوع الشغل';
+                    return 'من فضلك أدخل اسم الشركة';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saveChanges,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.orange,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveChanges,
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: Colors.orange,
+                  ),
+                  child:
+                      _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text('حفظ التعديلات'),
                 ),
-                child: Text('حفظ التعديلات'),
               ),
             ],
           ),

@@ -2,161 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shaghalny/providers/application_provider.dart';
 import 'package:shaghalny/models/application_model.dart';
-import 'package:shaghalny/services/api_service.dart';
 
-class EmployerApplications extends StatefulWidget {
-  final int jobId;
+class MyApplicationsPage extends StatefulWidget {
+  final int workerId;
 
-  const EmployerApplications({super.key, required this.jobId});
+  const MyApplicationsPage({super.key, required this.workerId});
 
   @override
-  State<EmployerApplications> createState() => _EmployerApplicationsState();
+  State<MyApplicationsPage> createState() => _MyApplicationsPageState();
 }
 
-class _EmployerApplicationsState extends State<EmployerApplications> {
+class _MyApplicationsPageState extends State<MyApplicationsPage> {
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Enable mock API mode to ensure applications can be seen
-    _enableMockApiIfNeeded();
-    _loadApplications(forceRefresh: true);
+    _loadApplications();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Reload applications when the screen is displayed
-    _refreshApplicationsIfNeeded();
-  }
-
-  // Enable mock API mode if we're having connection issues
-  Future<void> _enableMockApiIfNeeded() async {
-    try {
-      final status = await ApiService.checkApiStatus();
-      if (status['status'] != 'online') {
-        print('Employer applications: API is not online, enabling mock mode');
-        ApiService.setMockApiMode(true);
-      }
-    } catch (e) {
-      print('Employer applications: Error checking API status: $e');
-      // Enable mock mode on error
-      ApiService.setMockApiMode(true);
-    }
-    print(
-      'Employer applications: Mock API mode is ${ApiService.isMockApiEnabled() ? 'enabled' : 'disabled'}',
-    );
-  }
-
-  Future<void> _refreshApplicationsIfNeeded() async {
-    final applicationProvider = Provider.of<ApplicationProvider>(
-      context,
-      listen: false,
-    );
-
-    // Load applications if empty or if we have an error
-    if (applicationProvider.applications.isEmpty ||
-        applicationProvider.error != null) {
-      print(
-        'EmployerApplications: No applications or error, loading applications for job ${widget.jobId}',
-      );
-      await _loadApplications(forceRefresh: true);
-    } else {
-      print(
-        'EmployerApplications: ${applicationProvider.applications.length} applications already loaded',
-      );
-      // If we already have applications but are looking at a specific job, verify they're for this job
-      if (widget.jobId != 0 && applicationProvider.applications.isNotEmpty) {
-        // Check if applications are for this specific job
-        bool hasCorrectJobApplications = applicationProvider.applications.any(
-          (app) => app.jobsId == widget.jobId,
-        );
-
-        if (!hasCorrectJobApplications) {
-          print(
-            'EmployerApplications: Applications exist but not for job ${widget.jobId}, reloading',
-          );
-          await _loadApplications(forceRefresh: true);
-        }
-      }
-    }
-  }
-
-  Future<void> _loadApplications({bool forceRefresh = false}) async {
+  Future<void> _loadApplications() async {
     final applicationProvider = Provider.of<ApplicationProvider>(
       context,
       listen: false,
     );
     setState(() => _isLoading = true);
-
     try {
-      print(
-        'EmployerApplications: Loading applications for job ${widget.jobId}',
-      );
-
-      // Always fetch applications fresh from storage first to ensure we have the latest
-      await applicationProvider.initializeCache();
-
-      // Use different approach for "all applications" vs specific job
-      if (widget.jobId == 0) {
-        // Just re-initialize the cache to load all applications
-        print('EmployerApplications: Loading all applications from cache');
-      } else {
-        // Load applications for a specific job
-        print(
-          'EmployerApplications: Loading applications for specific job ${widget.jobId}',
-        );
-        await applicationProvider.fetchJobApplications(widget.jobId.toString());
-      }
-
-      print(
-        'EmployerApplications: ${applicationProvider.applications.length} applications loaded',
+      await applicationProvider.fetchWorkerApplications(
+        widget.workerId.toString(),
       );
     } catch (e) {
-      print('EmployerApplications: Error loading applications: $e');
       // Error is already stored in the provider
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _updateApplicationStatus(
-    Application application,
-    String newStatus,
-  ) async {
-    final applicationProvider = Provider.of<ApplicationProvider>(
-      context,
-      listen: false,
-    );
-
-    setState(() => _isLoading = true);
-    try {
-      final success = await applicationProvider.updateApplicationStatus(
-        application.id.toString(),
-        newStatus,
-      );
-      if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'تم تحديث حالة الطلب إلى ${_getStatusText(newStatus)}',
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل تحديث حالة الطلب: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -198,7 +74,7 @@ class _EmployerApplicationsState extends State<EmployerApplications> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('الطلبات المقدمة'),
+        title: const Text('طلباتي المرسلة'),
         backgroundColor: Colors.orange,
       ),
       body: RefreshIndicator(
@@ -231,7 +107,7 @@ class _EmployerApplicationsState extends State<EmployerApplications> {
                         );
                       } else if (applicationProvider.applications.isEmpty) {
                         return const Center(
-                          child: Text('لا توجد طلبات مقدمة لهذه الوظيفة'),
+                          child: Text('لم تقم بإرسال أي طلبات بعد'),
                         );
                       } else {
                         return ListView.builder(
@@ -264,7 +140,7 @@ class _EmployerApplicationsState extends State<EmployerApplications> {
               children: [
                 Expanded(
                   child: Text(
-                    application.name,
+                    application.jobTitle ?? 'وظيفة',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -297,6 +173,14 @@ class _EmployerApplicationsState extends State<EmployerApplications> {
             const SizedBox(height: 12),
             Row(
               children: [
+                const Icon(Icons.person, size: 18, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text('الاسم: ${application.name}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
                 const Icon(Icons.email, size: 18, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text('البريد الإلكتروني: ${application.email}'),
@@ -325,46 +209,15 @@ class _EmployerApplicationsState extends State<EmployerApplications> {
             ),
             const SizedBox(height: 4),
             Text(application.skills),
-            const SizedBox(height: 16),
-
-            // Action buttons for employers
-            if (application.status == 'pending')
+            const SizedBox(height: 12),
+            if (application.cv != null && application.cv!.isNotEmpty)
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton.icon(
-                    onPressed:
-                        () => _updateApplicationStatus(application, 'approved'),
-                    icon: const Icon(Icons.check),
-                    label: const Text('قبول'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                    ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed:
-                        () => _updateApplicationStatus(application, 'rejected'),
-                    icon: const Icon(Icons.close),
-                    label: const Text('رفض'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                  ),
+                  const Icon(Icons.attach_file, color: Colors.orange),
+                  const SizedBox(width: 8),
+                  Text('السيرة الذاتية: ${application.cv}'),
                 ],
               ),
-
-            if (application.status == 'approved')
-              ElevatedButton.icon(
-                onPressed:
-                    () => _updateApplicationStatus(application, 'completed'),
-                icon: const Icon(Icons.task_alt),
-                label: const Text('تم إكمال العمل'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  minimumSize: const Size(double.infinity, 40),
-                ),
-              ),
-
             if (application.createdAt != null)
               Align(
                 alignment: Alignment.centerLeft,

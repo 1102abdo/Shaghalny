@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\WorkerController;
 use App\Http\Controllers\Api\JobUserController;
 use App\Http\Controllers\Api\AuthWorkerController;
 use App\Http\Controllers\Api\ApplicationController;
+use App\Http\Controllers\Api\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,8 +41,42 @@ Route::middleware('api')->group(function () {
     Route::get('/workers',WorkerController::class);
 
     // ========================== Job Module
-    Route::get('/jobs',JobController::class);
+    Route::get('/jobs',[JobController::class, 'index']);
+    Route::post('/jobs',[JobController::class, 'store']);
+    Route::put('/jobs/{job_id}',[JobController::class, 'update']);
+    Route::delete('/jobs/{job_id}',[JobController::class, 'destroy']);
+    Route::put('/jobs/{job_id}/status',[JobController::class, 'updateStatus']);
 
     // ========================== Application Module
-    Route::get('/applications/{job_id}',ApplicationController::class);
+    Route::get('/applications/{job_id}',[ApplicationController::class, 'getJobApplications']);
+    Route::post('/applications',[ApplicationController::class, 'store']);
+    Route::put('/applications/{application_id}/status',[ApplicationController::class, 'updateStatus']);
+    Route::get('/worker/{worker_id}/applications',[ApplicationController::class, 'getWorkerApplications']);
 });
+
+Route::get('/test', function () {
+    return response()->json(['message' => 'API is working!']);
+});
+
+Route::get('/db-test', function () {
+    try {
+        DB::connection()->getPdo();
+        return response()->json(['message' => 'Database connection successful!']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
+    }
+});
+
+// Admin routes
+Route::controller(AdminController::class)->prefix('admin')->group(function(){
+    Route::post('/login', 'login');
+    // Add other admin routes as needed, with middleware protection
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::get('/users', 'getUsers');
+        Route::get('/posts', 'getPosts');
+        // Other admin-only endpoints
+    });
+});
+
+
+

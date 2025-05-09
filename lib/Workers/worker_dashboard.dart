@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'worker_profile.dart'; // تأكد من أنك قد قمت بإنشاء هذه الصفحة
 //import 'package:shaghalny/Workers/available_jobs_page.dart'; // تأكد من أنك قد قمت بإنشاء صفحة الوظائف المتاحة
-import 'edit_profile_page.dart';  // استيراد صفحة التعديل بشكل صحيح
+import 'edit_profile_page.dart'; // استيراد صفحة التعديل بشكل صحيح
 
 class WorkerDashboard extends StatelessWidget {
   final String userName;
   final String userEmail;
   final String userJob;
 
-  const WorkerDashboard({super.key, 
+  const WorkerDashboard({
+    super.key,
     required this.userName,
     required this.userEmail,
     required this.userJob,
@@ -36,10 +37,7 @@ class WorkerDashboard extends StatelessWidget {
             Center(
               child: Text(
                 'أهلاً بك في لوحة العامل!',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -57,11 +55,12 @@ class WorkerDashboard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => WorkerProfilePage(
-                        userName: userName,
-                        userEmail: userEmail,
-                        userJob: userJob,
-                      ),
+                      builder:
+                          (context) => WorkerProfilePage(
+                            userName: userName,
+                            userEmail: userEmail,
+                            userJob: userJob,
+                          ),
                     ),
                   );
                 },
@@ -81,11 +80,12 @@ class WorkerDashboard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditProfilePage(
-                        userName: userName,
-                        userEmail: userEmail,
-                        userJob: userJob,
-                      ),
+                      builder:
+                          (context) => EditProfilePage(
+                            userName: userName,
+                            userEmail: userEmail,
+                            userJob: userJob,
+                          ),
                     ),
                   );
                 },
@@ -102,7 +102,36 @@ class WorkerDashboard extends StatelessWidget {
                 title: Text('تسجيل الخروج'),
                 trailing: Icon(Icons.exit_to_app),
                 onTap: () {
-                  Navigator.pop(context); // يعود إلى شاشة تسجيل الدخول
+                  // Show logout confirmation dialog
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        title: Text('تسجيل الخروج'),
+                        content: Text('هل أنت متأكد من رغبتك في تسجيل الخروج؟'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(); // Close dialog
+                            },
+                            child: Text('إلغاء'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.of(dialogContext).pop(); // Close dialog
+
+                              // Navigate to logout page which will handle the actual logout
+                              Navigator.pushNamed(context, '/welcome');
+                            },
+                            child: Text(
+                              'تسجيل الخروج',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ),

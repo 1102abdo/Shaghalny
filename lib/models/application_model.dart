@@ -11,6 +11,7 @@ class Application {
   final int workersId;
   final String? jobTitle;
   final String? workerName;
+  final String status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -27,6 +28,7 @@ class Application {
     required this.workersId,
     this.jobTitle,
     this.workerName,
+    required this.status,
     this.createdAt,
     this.updatedAt,
   });
@@ -45,12 +47,15 @@ class Application {
       workersId: json['workers_id'],
       jobTitle: json['job_title'],
       workerName: json['worker_name'],
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : null,
+      status: json['status'] ?? 'pending',
+      createdAt:
+          json['created_at'] != null
+              ? DateTime.parse(json['created_at'])
+              : null,
+      updatedAt:
+          json['updated_at'] != null
+              ? DateTime.parse(json['updated_at'])
+              : null,
     );
   }
 
@@ -66,6 +71,7 @@ class Application {
       'bin': binned ? '1' : '0',
       'jobs_id': jobsId,
       'workers_id': workersId,
+      'status': status,
     };
   }
 }

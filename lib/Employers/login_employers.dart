@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shaghalny/services/api_service.dart';
 import 'sign_up_employers.dart'; // استيراد صفحة التسجيل
 import 'create_project.dart'; // استيراد صفحة إنشاء المشروع
-import '../providers/auth_provider.dart';
-import '../services/api_service.dart';
-import 'package:provider/provider.dart';
+// استيراد صفحة الملف الشخصي
+// import '../services/api_service.dart';
 
 class LoginEmployers extends StatefulWidget {
   final String userType;
@@ -122,7 +122,7 @@ class LoginEmployersState extends State<LoginEmployers> {
                                       response['data']['name'] ??
                                       emailController.text;
 
-                                  // الانتقال إلى صفحة إنشاء مشروع مع تمرير userName
+                                  // الانتقال إلى صفحة لوحة التحكم (dashboard)
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(

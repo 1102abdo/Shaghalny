@@ -11,10 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Remove the custom Cors middleware from web group
         $middleware->web(append: [
-            \App\Http\Middleware\Cors::class,
+            // \App\Http\Middleware\Cors::class,  // Comment this out
         ]);
 
+        // Keep it in the api group if needed
         $middleware->api(append: [
             \App\Http\Middleware\Cors::class,
         ]);
@@ -22,3 +24,4 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
+
